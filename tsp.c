@@ -43,7 +43,13 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 
-	fscanf(file, "%d%d", &c, &e);
+	if(fscanf(file, "%d%d", &c, &e)!= 2){
+		printf("Error reading values from the file.\n");
+        fclose(file); // Close the file before exiting
+        return 1; // Exiting the program with an error code
+	};
+
+
 
 #ifdef DEBUG
 	printf("size: %d\nedges: %d\n", c, e);
@@ -51,7 +57,9 @@ int main(int argc, char *argv[]) {
 #endif
 
 	for (k = 0; k < e; k++) {
-		fscanf(file, "%d%d%d", &i, &j, &w);
+		if(fscanf(file, "%d%d%d", &i, &j, &w) != 3){
+			printf("Error on reading values from file");
+		}
 		matrix[i][j] = w;
 		matrix[j][i] = w;
 	}

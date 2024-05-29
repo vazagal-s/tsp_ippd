@@ -1,3 +1,3 @@
-#$ -S /bin/sh
+$ -S /bin/sh
 
 time ./tsp

@@ -1,6 +1,6 @@
 FLAGS=-O2
 
-CC=icc
+CC=gcc
 
 RM=rm -f
 
