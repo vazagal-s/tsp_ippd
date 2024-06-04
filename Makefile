@@ -9,7 +9,7 @@ EXEC=tsp
 all: $(EXEC)
 
 $(EXEC):
-	$(CC) $(FLAGS) $(EXEC).c -c -o $(EXEC).o
+	$(CC) -fopenmp $(FLAGS) $(EXEC).c -c -o $(EXEC).o
 	$(CC) $(FLAGS) $(EXEC).o -o $(EXEC)
 
 run:
