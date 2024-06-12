@@ -3,7 +3,7 @@
 #include <string.h>
 #include <omp.h>
 
-#define DEBUG
+//#define DEBUG
 
 int tsp(int matrix[51][51], int cities, int distance, int initial, int current,
 		int ok[51], int total, int shortest) {
@@ -14,24 +14,20 @@ int tsp(int matrix[51][51], int cities, int distance, int initial, int current,
 		return distance + matrix[current][initial];
 
 	if (shortest < distance)
-		return distance;
+		return shortest;
 
 	for (i = 1; i <= cities; i++)
 		if (i != current && !ok[i]) {
 			ok[i] = 1;
-			#pragma omp task firstprivate(distance,current,total,ok) shared(shortest)
-			{
 				d = tsp(matrix, cities, distance + matrix[current][i], initial, i,
 						ok, total + 1, shortest);
-				#pragma omp critical
 				{
-					if (d < shortest)
+					if (d < shortest){
 						shortest = d;
+					}
 				}
 				ok[i] = 0;
 			}
-		}
-	#pragma omp taskwait
 	return shortest;
 }
 
@@ -39,7 +35,7 @@ int main(int argc, char *argv[]) {
 
 	int c, e;
 	int i, j, w, v;
-	int matrix[51][51], ok[51], d, D;
+	int matrix[51][51], ok[51], D;
 	int k;
 
 	memset(matrix, 0, sizeof(matrix));
@@ -73,29 +69,23 @@ int main(int argc, char *argv[]) {
 	}
 
 	D = 1000000;
-#pragma omp parallel
-{		
-	#pragma omp single
-	{
-		#pragma omp taskloop shared(D)
-		for (v = 1; v <= c; v++) {
+	#pragma omp parallel for private(ok) shared(D)
+	for (v = 1; v <= c; v++) {
 
 #ifdef DEBUG
 		printf("running: %d\n", v);
 		fflush(stdout);
 #endif
-
+			memset(ok, 0, sizeof(ok));
 			ok[v] = 1;
-			d = tsp(matrix, c, 0, v, v, ok, 1, D);
-			ok[v] = 0;
+			int d = tsp(matrix, c, 0, v, v, ok, 1, D);
 			#pragma omp critical
 			{
-			if (d < D)
-				D = d;
+				if (d < D){
+					D = d;
+				}
 			}
-		}
 	}
-}
 	fclose(file);
 
 	if ((file = fopen("tsp.out", "w")) == NULL) {

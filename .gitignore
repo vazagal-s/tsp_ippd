@@ -1,3 +1,5 @@
 *.o
-*.x
+*.out
+tsp_seq.x
+tsp.x
 /.vscode
